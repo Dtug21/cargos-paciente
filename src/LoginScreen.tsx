@@ -165,6 +165,10 @@ export function LoginScreen({ onEnter }: Props) {
           {demoMsg || 'Reiniciar demo'}
         </button>
       </div>
+
+      <p className="mt-2 text-center text-xs text-slate-400">
+        Un producto de <strong className="font-display font-semibold text-slate-500">Dito Labs SpA</strong>
+      </p>
     </div>
   )
 }

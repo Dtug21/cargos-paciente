@@ -1,8 +1,10 @@
 # Cargos paciente
 
-Prototipo de PWA para el registro rápido de insumos usados por paciente en la unidad, y su pase al sistema de facturación de la clínica.
+**Producto de [Dito Labs SpA](https://github.com/Dtug21) — registro inmediato y trazable de insumos por paciente para servicios clínicos.**
 
-📄 **[Ver propuesta completa para jefatura](PROPUESTA.md)** — resumen ejecutivo, opciones de conexión (Supabase / servidor propio), roadmap y costos.
+📄 **[Propuesta comercial (PROPUESTA.md)](PROPUESTA.md)** — modelo de negocio SaaS, opciones de conexión (Supabase / servidor propio), roadmap y valores referenciales.
+
+🔗 **[Prototipo funcional en línea](https://dtug21.github.io/cargos-paciente/)** — se abre en cualquier dispositivo.
 
 > Estado: prototipo funcional para demo en vivo. Los datos viven en el dispositivo (`localStorage`). El siguiente paso para un piloto real es conectar un backend compartido (por ejemplo Supabase) para sincronizar entre equipos.
 
@@ -106,6 +108,8 @@ Al ser PWA, la primera visita cachea la app y funciona sin conexión en visitas 
 - **Login por persona** (opcional): hoy la atribución es por selector rápido al confirmar. Con backend real se puede tener sesión persistente por dispositivo.
 - **Sincronización con el sistema de facturación**: hoy es copiar/pegar. Con integración real, el botón "Pasar al sistema" empuja directamente vía API.
 
-## Autor
+## Sobre Dito Labs SpA
 
-Prototipo desarrollado por Diego Ulloa (profesional clínico) para resolver un problema real observado en el servicio.
+Cargos paciente es un producto de **Dito Labs SpA**. Contacto comercial: Diego Ulloa.
+
+Para consultas sobre implementación, piloto o modelos de licenciamiento, ver [PROPUESTA.md](PROPUESTA.md).
