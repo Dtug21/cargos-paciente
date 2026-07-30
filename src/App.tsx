@@ -60,7 +60,7 @@ export default function App() {
   const inPatientFlow = screen.name === 'charge'
 
   return (
-    <div className="mx-auto flex min-h-dvh max-w-3xl flex-col gap-4 px-3 pb-8 pt-3 sm:px-6 sm:pt-4">
+    <div className="mx-auto flex min-h-dvh max-w-3xl flex-col gap-4 px-3 pb-8 pt-3 sm:px-6 sm:pt-4 xl:max-w-4xl">
       <header className="flex items-center justify-between gap-3 rounded-2xl bg-brand px-4 py-3">
         <div className="flex min-w-0 flex-col">
           <strong className="font-display text-xl font-extrabold tracking-tight text-white">

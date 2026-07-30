@@ -23,6 +23,16 @@ body,
   min-height: 100%;
 }
 
+/*
+  Escalado tipográfico global: el tamaño base va de 15px (móvil chico)
+  a 20px (monitor grande) según el ancho del viewport. Como Tailwind usa
+  rem, esto escala texto, padding, gaps, íconos y radios proporcionalmente
+  sin cambiar el layout. Preserva ratios visuales en todos los dispositivos.
+*/
+html {
+  font-size: clamp(15px, calc(13.5px + 0.35vw), 20px);
+}
+
 body {
   font-family: var(--font-body);
   background: var(--color-slate-50);
