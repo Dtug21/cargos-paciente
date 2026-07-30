@@ -166,6 +166,11 @@ export default function App() {
       {screen.name === 'stats' ? <UsageStatsScreen /> : null}
 
       {screen.name === 'people' ? <PeoplePanel /> : null}
+
+      <footer className="mt-auto pt-6 text-center text-xs text-slate-400">
+        <span>By </span>
+        <strong className="font-display font-semibold text-slate-500">Dito Labs SpA</strong>
+      </footer>
     </div>
   )
 }
