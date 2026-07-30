@@ -3,7 +3,6 @@ import type { Role } from './types'
 import { LoginScreen } from './LoginScreen'
 import { ChargeScreen } from './ChargeScreen'
 import { PatientForm, PatientsTab } from './PatientForm'
-import { CatalogPanel } from './CatalogPanel'
 import { PeoplePanel } from './PeoplePanel'
 import { ShiftScreen } from './ShiftScreen'
 import { UsageStatsScreen } from './UsageStatsScreen'
@@ -15,12 +14,11 @@ type Screen =
   | { name: 'patients' }
   | { name: 'charge'; patientId: string }
   | { name: 'patient-form'; editId?: string }
-  | { name: 'catalog' }
   | { name: 'people' }
   | { name: 'shift' }
   | { name: 'stats' }
 
-type Tab = 'pacientes' | 'turno' | 'uso' | 'insumos' | 'personal'
+type Tab = 'pacientes' | 'turno' | 'uso' | 'personal'
 
 export default function App() {
   useAppState()
@@ -53,7 +51,6 @@ export default function App() {
     if (next === 'pacientes') setScreen({ name: 'patients' })
     if (next === 'turno') setScreen({ name: 'shift' })
     if (next === 'uso') setScreen({ name: 'stats' })
-    if (next === 'insumos') setScreen({ name: 'catalog' })
     if (next === 'personal') setScreen({ name: 'people' })
   }
 
@@ -89,7 +86,7 @@ export default function App() {
       </header>
 
       {isAdmin && !inPatientFlow && screen.name !== 'patient-form' ? (
-        <div className="grid grid-cols-5 gap-1 rounded-xl border border-slate-200 bg-slate-100/70 p-1">
+        <div className="grid grid-cols-4 gap-1 rounded-xl border border-slate-200 bg-slate-100/70 p-1">
           <button
             type="button"
             onClick={() => goTab('pacientes')}
@@ -124,17 +121,6 @@ export default function App() {
                 }`}
               >
                 Uso
-              </button>
-              <button
-                type="button"
-                onClick={() => goTab('insumos')}
-                className={`min-h-11 rounded-lg text-sm font-medium transition-colors ${
-                  tab === 'insumos'
-                    ? 'bg-white text-slate-900 shadow-sm'
-                    : 'text-slate-500 hover:text-slate-700'
-                }`}
-              >
-                Insumos
               </button>
               <button
                 type="button"
@@ -178,8 +164,6 @@ export default function App() {
       ) : null}
 
       {screen.name === 'stats' ? <UsageStatsScreen /> : null}
-
-      {screen.name === 'catalog' ? <CatalogPanel /> : null}
 
       {screen.name === 'people' ? <PeoplePanel /> : null}
     </div>

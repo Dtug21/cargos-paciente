@@ -56,7 +56,7 @@ export function LoginScreen({ onEnter }: Props) {
           <p className="mb-1 text-sm font-medium text-slate-500">Acceso administrativo</p>
           <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">Ingresa el PIN</h1>
           <p className="mt-2 max-w-sm text-sm text-slate-500">
-            Solo admin: pasar cargos al sistema y editar el catálogo de insumos.
+            Solo admin: pasar cargos al sistema y gestionar el personal.
           </p>
         </div>
 

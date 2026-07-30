@@ -9,7 +9,7 @@ import type {
   Supply,
 } from './types'
 
-const STORAGE_KEY = 'cargos-paciente-v8'
+const STORAGE_KEY = 'cargos-paciente-v9'
 
 const defaultServices: Service[] = [
   { id: 'svc_upc', name: 'UPC', shortName: 'UPC' },
@@ -65,6 +65,144 @@ function createId(prefix: string) {
   return `${prefix}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 7)}`
 }
 
+function hoursAgo(h: number): string {
+  return new Date(Date.now() - h * 60 * 60 * 1000).toISOString()
+}
+
+/**
+ * Pacientes de ejemplo para mostrar la app con datos realistas en el
+ * arranque. Se puede reiniciar desde el login para volver a este estado.
+ */
+function demoPatients(): Patient[] {
+  return [
+    { id: 'p_demo_1', admissionNumber: '4521', bed: '1', status: 'active', createdAt: hoursAgo(9) },
+    { id: 'p_demo_2', admissionNumber: '4528', bed: '2', status: 'active', createdAt: hoursAgo(6) },
+    { id: 'p_demo_3', admissionNumber: '4530', bed: '3', status: 'active', createdAt: hoursAgo(4) },
+    { id: 'p_demo_5', admissionNumber: '4535', bed: '5', status: 'active', createdAt: hoursAgo(1) },
+  ]
+}
+
+/**
+ * Historial de ejemplo: cargas de distinto personal, una devolución,
+ * y un paciente con todo ya pasado al sistema. Cuenta la historia de un
+ * turno típico de UPC.
+ */
+function demoHistory(): ChargeBatch[] {
+  return [
+    // Cama 1: llegó desde Urgencia, luego trabajaron en UPC. Incluye devolución.
+    {
+      id: 'h_demo_1a',
+      patientId: 'p_demo_1',
+      serviceId: 'svc_urg',
+      serviceName: 'Urgencia',
+      createdAt: hoursAgo(8),
+      transferred: false,
+      kind: 'charge',
+      chargedById: 'per4',
+      chargedByName: 'Matías Fuentes',
+      lines: [
+        { supplyId: 's5', supplyName: 'Suero fisiológico 100 ml', quantity: 2 },
+        { supplyId: 's10', supplyName: 'Equipo venoclisis', quantity: 1 },
+        { supplyId: 's2', supplyName: 'Jeringa 5 ml', quantity: 2 },
+      ],
+    },
+    {
+      id: 'h_demo_1b',
+      patientId: 'p_demo_1',
+      serviceId: 'svc_upc',
+      serviceName: 'UPC',
+      createdAt: hoursAgo(3),
+      transferred: false,
+      kind: 'charge',
+      chargedById: 'per2',
+      chargedByName: 'Diego Soto',
+      lines: [
+        { supplyId: 's11', supplyName: 'Sonda de aspiración', quantity: 2 },
+        { supplyId: 's1', supplyName: 'Guantes de procedimiento', quantity: 4 },
+        { supplyId: 's6', supplyName: 'Gasas estériles', quantity: 3 },
+      ],
+    },
+    {
+      id: 'h_demo_1c',
+      patientId: 'p_demo_1',
+      serviceId: 'svc_upc',
+      serviceName: 'UPC',
+      createdAt: hoursAgo(2.5),
+      transferred: false,
+      kind: 'return',
+      chargedById: 'per2',
+      chargedByName: 'Diego Soto',
+      lines: [{ supplyId: 's1', supplyName: 'Guantes de procedimiento', quantity: 2 }],
+    },
+    {
+      id: 'h_demo_1d',
+      patientId: 'p_demo_1',
+      serviceId: 'svc_upc',
+      serviceName: 'UPC',
+      createdAt: hoursAgo(1),
+      transferred: false,
+      kind: 'charge',
+      chargedById: 'per1',
+      chargedByName: 'Camila Rojas',
+      lines: [
+        { supplyId: 's12', supplyName: 'Filtro HME (ventilación)', quantity: 1 },
+        { supplyId: 's13', supplyName: 'Electrodos ECG', quantity: 3 },
+      ],
+    },
+    // Cama 2: dos cargas de personal diferente.
+    {
+      id: 'h_demo_2a',
+      patientId: 'p_demo_2',
+      serviceId: 'svc_upc',
+      serviceName: 'UPC',
+      createdAt: hoursAgo(5),
+      transferred: false,
+      kind: 'charge',
+      chargedById: 'per3',
+      chargedByName: 'Valentina Pérez',
+      lines: [
+        { supplyId: 's1', supplyName: 'Guantes de procedimiento', quantity: 6 },
+        { supplyId: 's6', supplyName: 'Gasas estériles', quantity: 4 },
+        { supplyId: 's7', supplyName: 'Apósito transparente', quantity: 2 },
+        { supplyId: 's9', supplyName: 'Tórulas de algodón', quantity: 5 },
+      ],
+    },
+    {
+      id: 'h_demo_2b',
+      patientId: 'p_demo_2',
+      serviceId: 'svc_upc',
+      serviceName: 'UPC',
+      createdAt: hoursAgo(2),
+      transferred: false,
+      kind: 'charge',
+      chargedById: 'per1',
+      chargedByName: 'Camila Rojas',
+      lines: [
+        { supplyId: 's3', supplyName: 'Jeringa 10 ml', quantity: 1 },
+        { supplyId: 's4', supplyName: 'Aguja 21G', quantity: 1 },
+        { supplyId: 's8', supplyName: 'Alcohol 70%', quantity: 1 },
+      ],
+    },
+    // Cama 3: ejemplo de carga ya pasada al sistema (verde "Pasado" en la UI).
+    {
+      id: 'h_demo_3',
+      patientId: 'p_demo_3',
+      serviceId: 'svc_upc',
+      serviceName: 'UPC',
+      createdAt: hoursAgo(3.5),
+      transferred: true,
+      kind: 'charge',
+      chargedById: 'per1',
+      chargedByName: 'Camila Rojas',
+      lines: [
+        { supplyId: 's2', supplyName: 'Jeringa 5 ml', quantity: 3 },
+        { supplyId: 's1', supplyName: 'Guantes de procedimiento', quantity: 2 },
+      ],
+    },
+    // Cama 5: recién ingresó, sin cargas (ejemplo del estado vacío por paciente).
+  ]
+}
+
 /** Ordena camas de forma natural: "7" antes de "12", "12" antes de "12A". */
 function compareBed(a: string, b: string): number {
   const na = parseInt(a, 10)
@@ -88,10 +226,10 @@ function defaultState(): AppState {
       adminPin: '0000',
     },
     services: defaultServices,
-    patients: [],
+    patients: demoPatients(),
     supplies: defaultSupplies,
     people: defaultPeople,
-    history: [],
+    history: demoHistory(),
   }
 }
 
