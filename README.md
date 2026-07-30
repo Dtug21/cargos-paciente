@@ -2,8 +2,6 @@
 
 Prototipo de PWA para el registro rápido de insumos usados por paciente en la unidad, y su pase al sistema de facturación de la clínica.
 
-Diseñado para **Clínica Nueva Cordillera — Red Interclínica**.
-
 > Estado: prototipo funcional para demo en vivo. Los datos viven en el dispositivo (`localStorage`). El siguiente paso para un piloto real es conectar un backend compartido (por ejemplo Supabase) para sincronizar entre equipos.
 
 ## El problema que resuelve
@@ -47,7 +45,7 @@ La tablet queda amarrada a su unidad. La pantalla de inicio muestra la unidad en
 2. **Admin** entra a **Turno**, ve quién cargó qué y desde qué unidad, revisa el total neto y confirma el pase al sistema de la clínica.
 3. Al egreso, admin **cierra** el paciente.
 
-## Identidad visual (Interclínica — Clínica Nueva Cordillera)
+## Identidad visual
 
 Los tokens de marca viven en [`src/index.css`](src/index.css) (`@theme`) y se aplican con la regla 60-30-10:
 

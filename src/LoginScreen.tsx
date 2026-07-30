@@ -116,7 +116,7 @@ export function LoginScreen({ onEnter }: Props) {
           Cargos paciente
         </h1>
         <p className="mt-0.5 text-sm text-slate-500">
-          {settings.clinicLabel} · Red Interclínica
+          {settings.clinicLabel}
         </p>
       </div>
 

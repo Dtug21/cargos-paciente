@@ -3,7 +3,13 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
 
+// El repo es github.com/Dtug21/cargos-paciente, así que la app queda servida
+// desde https://dtug21.github.io/cargos-paciente/ — con esta base todas las
+// rutas de assets y del service worker apuntan al lugar correcto en GitHub Pages.
+const base = '/cargos-paciente/'
+
 export default defineConfig({
+  base,
   plugins: [
     react(),
     tailwindcss(),
@@ -18,7 +24,8 @@ export default defineConfig({
         background_color: '#F4F6F8',
         display: 'standalone',
         orientation: 'any',
-        start_url: '/',
+        start_url: base,
+        scope: base,
         icons: [
           {
             src: 'pwa-192.png',

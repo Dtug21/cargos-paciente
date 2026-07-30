@@ -82,7 +82,7 @@ function batchSign(batch: ChargeBatch): 1 | -1 | 0 {
 function defaultState(): AppState {
   return {
     settings: {
-      clinicLabel: 'Clínica Nueva Cordillera',
+      clinicLabel: 'Prototipo',
       currentServiceId: 'svc_upc',
       staffPin: '1234',
       adminPin: '0000',
