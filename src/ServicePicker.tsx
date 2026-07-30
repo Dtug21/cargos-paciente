@@ -17,8 +17,8 @@ export function ServicePicker({ compact }: Props) {
         <select
           value={settings.currentServiceId}
           onChange={(e) => setCurrentService(e.target.value)}
-          className="min-h-9 max-w-[9.5rem] truncate rounded-full border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-600/15"
-          aria-label="Servicio desde el que cargás"
+          className="min-h-9 max-w-[9.5rem] truncate rounded-full border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 outline-none focus:border-brand focus:ring-2 focus:ring-brand/15"
+          aria-label="Servicio desde el que se carga"
         >
           {services.map((s) => (
             <option key={s.id} value={s.id}>
@@ -32,7 +32,7 @@ export function ServicePicker({ compact }: Props) {
 
   return (
     <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-      <p className="mb-1 text-sm font-medium text-slate-900">¿Desde qué servicio cargás?</p>
+      <p className="mb-1 text-sm font-medium text-slate-900">¿Desde qué servicio se carga?</p>
       <p className="mb-3 text-xs text-slate-500">
         Los cobros se asocian a este servicio (UPC, Urgencia, Pabellón, MQ…).
       </p>
@@ -46,7 +46,7 @@ export function ServicePicker({ compact }: Props) {
               onClick={() => setCurrentService(s.id)}
               className={`min-h-12 rounded-xl border px-3 text-left transition-colors ${
                 active
-                  ? 'border-teal-600 bg-teal-50 ring-1 ring-teal-600/20'
+                  ? 'border-brand bg-brand-tint ring-1 ring-brand/20'
                   : 'border-slate-200 bg-white hover:border-slate-300'
               }`}
             >

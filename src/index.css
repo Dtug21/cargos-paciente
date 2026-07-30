@@ -3,6 +3,18 @@
 @theme {
   --font-display: 'Figtree', system-ui, sans-serif;
   --font-body: 'IBM Plex Sans', system-ui, sans-serif;
+
+  /* Marca Interclínica — Clínica Nueva Cordillera */
+  --color-brand: #0c3866; /* azul institucional: estructura (30%) */
+  --color-brand-dark: #0a2e52; /* hover del azul */
+  --color-brand-tint: #e9f0f7; /* fondos/chips azul diluido */
+  --color-accent: #8cc63f; /* verde lima: acción crítica (10%) */
+  --color-accent-dark: #7db334; /* hover/activo del lima */
+  --color-ok: #28a745; /* éxito estándar de salud */
+  --color-bad: #dc3545; /* error/alerta crítica */
+
+  /* Fondo de pantalla de marca (60%) */
+  --color-slate-50: #f4f6f8;
 }
 
 html,
@@ -13,6 +25,7 @@ body,
 
 body {
   font-family: var(--font-body);
+  background: var(--color-slate-50);
   -webkit-font-smoothing: antialiased;
   -webkit-tap-highlight-color: transparent;
 }

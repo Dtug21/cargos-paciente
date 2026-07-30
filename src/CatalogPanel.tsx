@@ -1,9 +1,9 @@
 import { useState, type FormEvent } from 'react'
-import { addSupply, updateSupply } from './store'
+import { addSupply, toggleSupplyService, updateSupply } from './store'
 import { useAppState } from './useAppState'
 
 export function CatalogPanel() {
-  const { supplies } = useAppState()
+  const { supplies, services } = useAppState()
   const [name, setName] = useState('')
 
   function submit(e: FormEvent) {
@@ -20,7 +20,8 @@ export function CatalogPanel() {
       <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
         <h2 className="text-lg font-semibold text-slate-900">Catálogo de insumos</h2>
         <p className="mt-1 text-sm text-slate-500">
-          Stock compartido. El servicio (UPC, Urgencia, etc.) se elige al cargar, no acá.
+          Marca en qué unidades hay stock de cada insumo. La tablet de cada unidad muestra solo los
+          suyos. Sin marcas = aparece en todas.
         </p>
 
         <form onSubmit={submit} className="mt-4 flex flex-wrap items-end gap-3">
@@ -34,12 +35,12 @@ export function CatalogPanel() {
               onChange={(e) => setName(e.target.value)}
               placeholder="Ej. Catéter periférico"
               autoComplete="off"
-              className="min-h-12 rounded-xl border border-slate-200 bg-white px-4 text-slate-900 outline-none transition-shadow focus:border-teal-600 focus:ring-2 focus:ring-teal-600/15"
+              className="min-h-12 rounded-xl border border-slate-200 bg-white px-4 text-slate-900 outline-none transition-shadow focus:border-brand focus:ring-2 focus:ring-brand/15"
             />
           </div>
           <button
             type="submit"
-            className="min-h-12 rounded-xl bg-teal-700 px-5 font-medium text-white shadow-sm transition-colors hover:bg-teal-800"
+            className="min-h-12 rounded-xl bg-accent px-5 font-medium text-brand shadow-sm transition-colors hover:bg-accent-dark"
           >
             Agregar
           </button>
@@ -47,36 +48,61 @@ export function CatalogPanel() {
 
         <div className="mt-3">
           {list.map((s) => (
-            <div
-              key={s.id}
-              className="flex items-center justify-between gap-3 border-t border-slate-100 py-3 first:border-t-0"
-            >
-              <div className="flex min-w-0 flex-col gap-0.5">
-                <strong
-                  className={`truncate font-medium ${s.active ? 'text-slate-900' : 'text-slate-400'}`}
-                >
-                  {s.name}
-                </strong>
-                <span className="text-xs text-slate-400">
-                  {s.active ? (s.favorite ? 'Frecuente' : 'Activo') : 'Oculto'}
-                </span>
+            <div key={s.id} className="border-t border-slate-100 py-3 first:border-t-0">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex min-w-0 flex-col gap-0.5">
+                  <strong
+                    className={`truncate font-medium ${s.active ? 'text-slate-900' : 'text-slate-400'}`}
+                  >
+                    {s.name}
+                  </strong>
+                  <span className="text-xs text-slate-400">
+                    {s.active ? (s.favorite ? 'Frecuente' : 'Activo') : 'Oculto'}
+                  </span>
+                </div>
+                <div className="flex shrink-0 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => updateSupply(s.id, { favorite: !s.favorite })}
+                    disabled={!s.active}
+                    aria-label={s.favorite ? 'Quitar de frecuentes' : 'Marcar como frecuente'}
+                    className="min-h-10 min-w-10 rounded-lg bg-slate-100 text-base text-slate-600 transition-colors hover:bg-slate-200 disabled:opacity-40"
+                  >
+                    {s.favorite ? '★' : '☆'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => updateSupply(s.id, { active: !s.active })}
+                    className="min-h-10 rounded-lg border border-slate-200 px-3 text-sm font-medium text-slate-500 transition-colors hover:bg-slate-50"
+                  >
+                    {s.active ? 'Ocultar' : 'Mostrar'}
+                  </button>
+                </div>
               </div>
-              <div className="flex gap-2">
-                <button
-                  type="button"
-                  onClick={() => updateSupply(s.id, { favorite: !s.favorite })}
-                  disabled={!s.active}
-                  className="min-h-10 min-w-10 rounded-lg bg-slate-100 text-base text-slate-600 transition-colors hover:bg-slate-200 disabled:opacity-40"
-                >
-                  {s.favorite ? '★' : '☆'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => updateSupply(s.id, { active: !s.active })}
-                  className="min-h-10 rounded-lg border border-slate-200 px-3 text-sm font-medium text-slate-500 transition-colors hover:bg-slate-50"
-                >
-                  {s.active ? 'Ocultar' : 'Mostrar'}
-                </button>
+
+              <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                <span className="mr-1 text-xs font-medium text-slate-400">Stock en:</span>
+                {services.map((svc) => {
+                  const on = s.serviceIds.length === 0 || s.serviceIds.includes(svc.id)
+                  const all = s.serviceIds.length === 0
+                  return (
+                    <button
+                      key={svc.id}
+                      type="button"
+                      onClick={() => toggleSupplyService(s.id, svc.id)}
+                      className={`min-h-8 rounded-full px-3 text-xs font-semibold transition-colors ${
+                        on
+                          ? all
+                            ? 'bg-slate-100 text-slate-500 ring-1 ring-slate-200'
+                            : 'bg-brand text-white'
+                          : 'bg-white text-slate-400 ring-1 ring-slate-200 hover:ring-slate-300'
+                      }`}
+                      title={all ? 'Disponible en todas las unidades' : svc.name}
+                    >
+                      {svc.shortName}
+                    </button>
+                  )
+                })}
               </div>
             </div>
           ))}

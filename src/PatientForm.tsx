@@ -8,6 +8,7 @@ import {
   updatePatient,
 } from './store'
 import { useAppState } from './useAppState'
+import { ConfirmDialog } from './ConfirmDialog'
 
 type Props = {
   onDone: () => void
@@ -18,6 +19,7 @@ export function PatientForm({ onDone, editId }: Props) {
   const existing = editId ? getPatient(editId) : undefined
   const [admissionNumber, setAdmissionNumber] = useState(existing?.admissionNumber ?? '')
   const [bed, setBed] = useState(existing?.bed ?? '')
+  const [closeOpen, setCloseOpen] = useState(false)
 
   function submit(e: FormEvent) {
     e.preventDefault()
@@ -61,7 +63,7 @@ export function PatientForm({ onDone, editId }: Props) {
           autoComplete="off"
           placeholder="Ej. 101"
           autoFocus
-          className="min-h-12 rounded-xl border border-slate-200 bg-white px-4 text-slate-900 outline-none transition-shadow focus:border-teal-600 focus:ring-2 focus:ring-teal-600/15"
+          className="min-h-12 rounded-xl border border-slate-200 bg-white px-4 text-slate-900 outline-none transition-shadow focus:border-brand focus:ring-2 focus:ring-brand/15"
         />
       </div>
 
@@ -77,7 +79,7 @@ export function PatientForm({ onDone, editId }: Props) {
           inputMode="numeric"
           autoComplete="off"
           placeholder="Ej. 4521"
-          className="min-h-12 rounded-xl border border-slate-200 bg-white px-4 text-slate-900 outline-none transition-shadow focus:border-teal-600 focus:ring-2 focus:ring-teal-600/15"
+          className="min-h-12 rounded-xl border border-slate-200 bg-white px-4 text-slate-900 outline-none transition-shadow focus:border-brand focus:ring-2 focus:ring-brand/15"
         />
       </div>
 
@@ -91,7 +93,7 @@ export function PatientForm({ onDone, editId }: Props) {
         </button>
         <button
           type="submit"
-          className="min-h-12 flex-1 rounded-xl bg-teal-700 font-medium text-white shadow-sm transition-colors hover:bg-teal-800"
+          className="min-h-12 flex-1 rounded-xl bg-accent font-medium text-brand shadow-sm transition-colors hover:bg-accent-dark"
         >
           {editId ? 'Guardar' : 'Agregar'}
         </button>
@@ -100,17 +102,26 @@ export function PatientForm({ onDone, editId }: Props) {
       {editId ? (
         <button
           type="button"
-          onClick={() => {
-            if (confirm('¿Cerrar paciente y quitarlo de la lista?')) {
-              closePatient(editId)
-              onDone()
-            }
-          }}
-          className="min-h-12 w-full rounded-xl bg-rose-50 font-medium text-rose-600 transition-colors hover:bg-rose-100"
+          onClick={() => setCloseOpen(true)}
+          className="min-h-12 w-full rounded-xl bg-red-50 font-medium text-bad transition-colors hover:bg-red-100"
         >
           Cerrar paciente (egreso)
         </button>
       ) : null}
+
+      <ConfirmDialog
+        open={closeOpen}
+        title="¿Cerrar este paciente?"
+        message="Se quita de la lista de la unidad por egreso. Su historial de cargas se conserva."
+        confirmLabel="Cerrar paciente"
+        tone="danger"
+        onConfirm={() => {
+          if (editId) closePatient(editId)
+          setCloseOpen(false)
+          onDone()
+        }}
+        onCancel={() => setCloseOpen(false)}
+      />
     </form>
   )
 }
@@ -137,20 +148,20 @@ export function PatientsTab({
         <button
           type="button"
           onClick={onAdd}
-          className="min-h-11 rounded-xl bg-teal-700 px-4 font-medium text-white shadow-sm transition-colors hover:bg-teal-800"
+          className="min-h-11 rounded-xl bg-accent px-4 font-medium text-brand shadow-sm transition-colors hover:bg-accent-dark"
         >
           + Agregar
         </button>
       </div>
       <p className="mt-1 text-sm text-slate-500">
         {admin
-          ? 'Tocá un paciente para ver lo que le fueron cargando y pasarlo al sistema.'
-          : 'Cama primero, luego admisión. Tocá para entrar al perfil de cargos.'}
+          ? 'Toca un paciente para ver lo que le fueron cargando y pasarlo al sistema.'
+          : 'Toca la cama del paciente para cargar sus insumos.'}
       </p>
 
       {active.length === 0 ? (
         <div className="py-10 text-center text-sm text-slate-400">
-          Lista vacía. Agregá el primer paciente.
+          Lista vacía. Agrega el primer paciente.
         </div>
       ) : (
         <div className="mt-4 flex flex-col gap-2">
@@ -161,7 +172,7 @@ export function PatientsTab({
                 <button
                   type="button"
                   onClick={() => onSelect(p.id)}
-                  className="flex flex-1 min-h-14 items-center gap-3 rounded-xl border border-slate-200 bg-slate-50/60 px-4 text-left transition-colors hover:border-teal-600/40 hover:bg-teal-50/40"
+                  className="flex flex-1 min-h-14 items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 text-left transition-colors hover:border-brand/40 hover:bg-brand-tint/60"
                 >
                   <span className="flex min-w-12 items-center justify-center rounded-lg bg-white px-2 py-1.5 font-display text-lg font-bold text-slate-700 ring-1 ring-slate-200">
                     {p.bed}

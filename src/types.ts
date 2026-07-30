@@ -20,6 +20,19 @@ export type Supply = {
   name: string
   favorite: boolean
   active: boolean
+  /** Unidades que tienen este insumo en stock. Vacío = disponible en todas. */
+  serviceIds: string[]
+}
+
+/** Profesional o técnico que puede figurar como responsable de una carga. */
+export type Person = {
+  id: string
+  name: string
+  /** Cargo: Enfermero/a, TENS, Médico/a, etc. */
+  role: string
+  /** Unidades donde trabaja. Vacío = aparece en todas. */
+  serviceIds: string[]
+  active: boolean
 }
 
 export type ChargeLine = {
@@ -37,8 +50,18 @@ export type ChargeBatch = {
   serviceName: string
   createdAt: string
   lines: ChargeLine[]
+  /** Quién hizo la carga (obligatorio al confirmar). */
+  chargedById?: string
+  chargedByName?: string
   /** Si ya se pasó al sistema de la clínica. */
   transferred: boolean
+  /**
+   * 'charge' = insumos usados (suma al total).
+   * 'return' = insumos devueltos que se sacaron pero no se usaron (resta al total).
+   */
+  kind: 'charge' | 'return'
+  /** Carga anulada: se registró por error. Queda en el historial pero no cuenta. */
+  voided?: boolean
 }
 
 export type AppSettings = {
@@ -53,5 +76,6 @@ export type AppState = {
   services: Service[]
   patients: Patient[]
   supplies: Supply[]
+  people: Person[]
   history: ChargeBatch[]
 }
