@@ -2,6 +2,8 @@
 
 Prototipo de PWA para el registro rápido de insumos usados por paciente en la unidad, y su pase al sistema de facturación de la clínica.
 
+📄 **[Ver propuesta completa para jefatura](PROPUESTA.md)** — resumen ejecutivo, opciones de conexión (Supabase / servidor propio), roadmap y costos.
+
 > Estado: prototipo funcional para demo en vivo. Los datos viven en el dispositivo (`localStorage`). El siguiente paso para un piloto real es conectar un backend compartido (por ejemplo Supabase) para sincronizar entre equipos.
 
 ## El problema que resuelve
