@@ -2,7 +2,9 @@
 
 **Producto de [Dito Labs SpA](https://github.com/Dtug21) — registro inmediato y trazable de insumos por paciente para servicios clínicos.**
 
-📄 **[Propuesta comercial (PROPUESTA.md)](PROPUESTA.md)** — modelo de negocio SaaS, opciones de conexión (Supabase / servidor propio), roadmap y valores referenciales.
+📄 **Propuesta comercial oficial:** [`.docx`](DitoLabs_PropuestaComercial_CargosPaciente_v1.docx) · [`.pdf`](DitoLabs_PropuestaComercial_CargosPaciente_v1.pdf) — documento con identidad de marca Dito Labs, modelo SaaS y valores referenciales en UF.
+
+📝 [Versión editable en markdown (PROPUESTA.md)](PROPUESTA.md) — fuente narrativa, útil para modificar y regenerar variantes.
 
 🔗 **[Prototipo funcional en línea](https://dtug21.github.io/cargos-paciente/)** — se abre en cualquier dispositivo.
 
