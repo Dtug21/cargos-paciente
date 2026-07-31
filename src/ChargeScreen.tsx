@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import {
+  addSupply,
   confirmChargeBatch,
   getActivePeople,
   getActiveSupplies,
@@ -49,6 +50,8 @@ export function ChargeScreen({ patientId, onBack, admin }: Props) {
   const [confirmOpen, setConfirmOpen] = useState(false)
   const [transferOpen, setTransferOpen] = useState(false)
   const [annulId, setAnnulId] = useState<string | null>(null)
+  const [addSupplyOpen, setAddSupplyOpen] = useState(false)
+  const [newSupplyName, setNewSupplyName] = useState('')
   const [toast, setToast] = useState('')
 
   const supplies = getActiveSupplies()
@@ -135,6 +138,16 @@ export function ChargeScreen({ patientId, onBack, admin }: Props) {
     voidChargeBatch(annulId)
     setAnnulId(null)
     setToast('Carga anulada')
+    setTimeout(() => setToast(''), 2200)
+  }
+
+  function submitNewSupply() {
+    const name = newSupplyName.trim()
+    if (!name) return
+    addSupply(name, [service.id])
+    setNewSupplyName('')
+    setAddSupplyOpen(false)
+    setToast(`"${name}" agregado al catálogo`)
     setTimeout(() => setToast(''), 2200)
   }
 
@@ -350,6 +363,16 @@ export function ChargeScreen({ patientId, onBack, admin }: Props) {
               })}
             </div>
           )}
+
+          {mode === 'charge' ? (
+            <button
+              type="button"
+              onClick={() => setAddSupplyOpen(true)}
+              className="min-h-11 w-full rounded-xl border border-dashed border-slate-300 bg-white text-sm font-medium text-slate-500 transition-colors hover:border-brand hover:bg-brand-tint hover:text-brand"
+            >
+              + Agregar insumo al catálogo de {service.shortName}
+            </button>
+          ) : null}
 
           <div className="pt-2" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
             <button
@@ -672,6 +695,63 @@ export function ChargeScreen({ patientId, onBack, admin }: Props) {
         onConfirm={confirmAnnul}
         onCancel={() => setAnnulId(null)}
       />
+
+      {addSupplyOpen ? (
+        <div
+          role="presentation"
+          onClick={() => setAddSupplyOpen(false)}
+          className="fixed inset-0 z-50 grid place-items-end justify-center bg-slate-900/40 p-4 sm:place-items-center"
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="add-supply-title"
+            onClick={(e) => e.stopPropagation()}
+            className="animate-modal w-full max-w-md rounded-2xl border border-slate-200 bg-white p-5 shadow-xl"
+            style={{ marginBottom: 'env(safe-area-inset-bottom)' }}
+          >
+            <h2 id="add-supply-title" className="text-lg font-semibold text-slate-900">
+              Agregar insumo
+            </h2>
+            <p className="mt-1 text-sm text-slate-500">
+              Aparece en el catálogo de <strong className="font-semibold text-brand">{service.name}</strong>
+              . Uso pensado para la versión de prueba, para no interrumpir un registro si falta algo.
+            </p>
+            <input
+              autoFocus
+              value={newSupplyName}
+              onChange={(e) => setNewSupplyName(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') submitNewSupply()
+              }}
+              placeholder="Ej. Bránula 24"
+              autoComplete="off"
+              aria-label="Nombre del insumo"
+              className="mt-4 min-h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-slate-900 outline-none transition-shadow focus:border-brand focus:ring-2 focus:ring-brand/15"
+            />
+            <div className="mt-4 flex gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setAddSupplyOpen(false)
+                  setNewSupplyName('')
+                }}
+                className="min-h-12 flex-1 rounded-xl border border-slate-200 font-medium text-slate-500 transition-colors hover:bg-slate-50"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                disabled={!newSupplyName.trim()}
+                onClick={submitNewSupply}
+                className="min-h-12 flex-1 rounded-xl bg-accent font-medium text-brand shadow-sm transition-colors hover:bg-accent-dark disabled:opacity-40 disabled:shadow-none"
+              >
+                Agregar
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       {toast ? (
         <div className="animate-toast fixed bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-full bg-slate-900 px-5 py-3 text-sm font-medium text-white shadow-lg">

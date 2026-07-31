@@ -9,7 +9,7 @@ import type {
   Supply,
 } from './types'
 
-const STORAGE_KEY = 'cargos-paciente-v9'
+const STORAGE_KEY = 'cargos-paciente-v10'
 
 const defaultServices: Service[] = [
   { id: 'svc_upc', name: 'UPC', shortName: 'UPC' },
@@ -18,39 +18,40 @@ const defaultServices: Service[] = [
   { id: 'svc_pab', name: 'Pabellón', shortName: 'PAB' },
 ]
 
+// Catálogo real de insumos. Cada insumo aparece en todas las unidades (serviceIds vacío).
+// Los marcados como favorite se muestran primero en el listado de carga.
 const defaultSupplies: Supply[] = [
-  { id: 's1', name: 'Guantes de procedimiento', favorite: true, active: true, serviceIds: [] },
-  { id: 's2', name: 'Jeringa 5 ml', favorite: true, active: true, serviceIds: [] },
-  { id: 's3', name: 'Jeringa 10 ml', favorite: true, active: true, serviceIds: [] },
-  { id: 's4', name: 'Aguja 21G', favorite: false, active: true, serviceIds: [] },
-  { id: 's5', name: 'Suero fisiológico 100 ml', favorite: true, active: true, serviceIds: [] },
-  { id: 's6', name: 'Gasas estériles', favorite: true, active: true, serviceIds: [] },
-  { id: 's7', name: 'Apósito transparente', favorite: false, active: true, serviceIds: [] },
-  { id: 's8', name: 'Alcohol 70%', favorite: false, active: true, serviceIds: [] },
-  { id: 's9', name: 'Tórulas de algodón', favorite: false, active: true, serviceIds: [] },
-  { id: 's10', name: 'Equipo venoclisis', favorite: true, active: true, serviceIds: [] },
-  // Insumos de cuidados críticos: solo aparecen en las unidades que los tienen en stock.
-  {
-    id: 's11',
-    name: 'Sonda de aspiración',
-    favorite: true,
-    active: true,
-    serviceIds: ['svc_upc'],
-  },
-  {
-    id: 's12',
-    name: 'Filtro HME (ventilación)',
-    favorite: false,
-    active: true,
-    serviceIds: ['svc_upc'],
-  },
-  {
-    id: 's13',
-    name: 'Electrodos ECG',
-    favorite: false,
-    active: true,
-    serviceIds: ['svc_upc', 'svc_urg'],
-  },
+  // Frecuentes (uso diario en cuidados)
+  { id: 's_ag18', name: 'Aguja 18', favorite: true, active: true, serviceIds: [] },
+  { id: 's_ll3p', name: 'Llave 3 pasos', favorite: true, active: true, serviceIds: [] },
+  { id: 's_jer5', name: 'Jeringa 5', favorite: true, active: true, serviceIds: [] },
+  { id: 's_jer10', name: 'Jeringa 10', favorite: true, active: true, serviceIds: [] },
+  { id: 's_jer20', name: 'Jeringa 20', favorite: true, active: true, serviceIds: [] },
+  { id: 's_gest', name: 'Guante estéril', favorite: true, active: true, serviceIds: [] },
+  { id: 's_gasa', name: 'Gasa estéril', favorite: true, active: true, serviceIds: [] },
+  { id: 's_sf100', name: 'Suero fisiológico 100 cc', favorite: true, active: true, serviceIds: [] },
+  { id: 's_sf250', name: 'Suero fisiológico 250 cc', favorite: true, active: true, serviceIds: [] },
+  { id: 's_alco', name: 'Alcohol pad', favorite: true, active: true, serviceIds: [] },
+  { id: 's_br20', name: 'Bránula 20', favorite: true, active: true, serviceIds: [] },
+  { id: 's_br18', name: 'Bránula 18', favorite: true, active: true, serviceIds: [] },
+  { id: 's_elec', name: 'Electrodos', favorite: true, active: true, serviceIds: [] },
+  // Resto del catálogo (alfabético automático dentro del grupo)
+  { id: 's_apos', name: 'Apósito 10x20', favorite: false, active: true, serviceIds: [] },
+  { id: 's_alll', name: 'Alargador con llave 3 pasos', favorite: false, active: true, serviceIds: [] },
+  { id: 's_br22', name: 'Bránula 22', favorite: false, active: true, serviceIds: [] },
+  { id: 's_hiso', name: 'Hisopos', favorite: false, active: true, serviceIds: [] },
+  { id: 's_jins', name: 'Jeringa insulina', favorite: false, active: true, serviceIds: [] },
+  { id: 's_kcur', name: 'Kit curación', favorite: false, active: true, serviceIds: [] },
+  { id: 's_kviv', name: 'Kit vía venosa', favorite: false, active: true, serviceIds: [] },
+  { id: 's_pana', name: 'Pañal', favorite: false, active: true, serviceIds: [] },
+  { id: 's_pace', name: 'Paño cerrado estéril', favorite: false, active: true, serviceIds: [] },
+  { id: 's_rest', name: 'Riñón estéril', favorite: false, active: true, serviceIds: [] },
+  { id: 's_saba', name: 'Sabanilla', favorite: false, active: true, serviceIds: [] },
+  { id: 's_sf20', name: 'Suero fisiológico 20 cc', favorite: false, active: true, serviceIds: [] },
+  { id: 's_sfol', name: 'Sonda Foley', favorite: false, active: true, serviceIds: [] },
+  { id: 's_snas', name: 'Sonda nasogástrica', favorite: false, active: true, serviceIds: [] },
+  { id: 's_tanr', name: 'Tapas antirreflujo', favorite: false, active: true, serviceIds: [] },
+  { id: 's_tror', name: 'Tapas rojas', favorite: false, active: true, serviceIds: [] },
 ]
 
 const defaultPeople: Person[] = [
@@ -101,9 +102,9 @@ function demoHistory(): ChargeBatch[] {
       chargedById: 'per4',
       chargedByName: 'Matías Fuentes',
       lines: [
-        { supplyId: 's5', supplyName: 'Suero fisiológico 100 ml', quantity: 2 },
-        { supplyId: 's10', supplyName: 'Equipo venoclisis', quantity: 1 },
-        { supplyId: 's2', supplyName: 'Jeringa 5 ml', quantity: 2 },
+        { supplyId: 's_sf100', supplyName: 'Suero fisiológico 100 cc', quantity: 2 },
+        { supplyId: 's_kviv', supplyName: 'Kit vía venosa', quantity: 1 },
+        { supplyId: 's_jer5', supplyName: 'Jeringa 5', quantity: 2 },
       ],
     },
     {
@@ -117,9 +118,9 @@ function demoHistory(): ChargeBatch[] {
       chargedById: 'per2',
       chargedByName: 'Diego Soto',
       lines: [
-        { supplyId: 's11', supplyName: 'Sonda de aspiración', quantity: 2 },
-        { supplyId: 's1', supplyName: 'Guantes de procedimiento', quantity: 4 },
-        { supplyId: 's6', supplyName: 'Gasas estériles', quantity: 3 },
+        { supplyId: 's_sfol', supplyName: 'Sonda Foley', quantity: 1 },
+        { supplyId: 's_gest', supplyName: 'Guante estéril', quantity: 4 },
+        { supplyId: 's_gasa', supplyName: 'Gasa estéril', quantity: 3 },
       ],
     },
     {
@@ -132,7 +133,7 @@ function demoHistory(): ChargeBatch[] {
       kind: 'return',
       chargedById: 'per2',
       chargedByName: 'Diego Soto',
-      lines: [{ supplyId: 's1', supplyName: 'Guantes de procedimiento', quantity: 2 }],
+      lines: [{ supplyId: 's_gest', supplyName: 'Guante estéril', quantity: 2 }],
     },
     {
       id: 'h_demo_1d',
@@ -145,8 +146,8 @@ function demoHistory(): ChargeBatch[] {
       chargedById: 'per1',
       chargedByName: 'Camila Rojas',
       lines: [
-        { supplyId: 's12', supplyName: 'Filtro HME (ventilación)', quantity: 1 },
-        { supplyId: 's13', supplyName: 'Electrodos ECG', quantity: 3 },
+        { supplyId: 's_elec', supplyName: 'Electrodos', quantity: 3 },
+        { supplyId: 's_ll3p', supplyName: 'Llave 3 pasos', quantity: 1 },
       ],
     },
     // Cama 2: dos cargas de personal diferente.
@@ -161,10 +162,10 @@ function demoHistory(): ChargeBatch[] {
       chargedById: 'per3',
       chargedByName: 'Valentina Pérez',
       lines: [
-        { supplyId: 's1', supplyName: 'Guantes de procedimiento', quantity: 6 },
-        { supplyId: 's6', supplyName: 'Gasas estériles', quantity: 4 },
-        { supplyId: 's7', supplyName: 'Apósito transparente', quantity: 2 },
-        { supplyId: 's9', supplyName: 'Tórulas de algodón', quantity: 5 },
+        { supplyId: 's_gest', supplyName: 'Guante estéril', quantity: 6 },
+        { supplyId: 's_gasa', supplyName: 'Gasa estéril', quantity: 4 },
+        { supplyId: 's_apos', supplyName: 'Apósito 10x20', quantity: 2 },
+        { supplyId: 's_kcur', supplyName: 'Kit curación', quantity: 1 },
       ],
     },
     {
@@ -178,9 +179,9 @@ function demoHistory(): ChargeBatch[] {
       chargedById: 'per1',
       chargedByName: 'Camila Rojas',
       lines: [
-        { supplyId: 's3', supplyName: 'Jeringa 10 ml', quantity: 1 },
-        { supplyId: 's4', supplyName: 'Aguja 21G', quantity: 1 },
-        { supplyId: 's8', supplyName: 'Alcohol 70%', quantity: 1 },
+        { supplyId: 's_jer10', supplyName: 'Jeringa 10', quantity: 1 },
+        { supplyId: 's_ag18', supplyName: 'Aguja 18', quantity: 1 },
+        { supplyId: 's_alco', supplyName: 'Alcohol pad', quantity: 1 },
       ],
     },
     // Cama 3: ejemplo de carga ya pasada al sistema (verde "Pasado" en la UI).
@@ -195,8 +196,8 @@ function demoHistory(): ChargeBatch[] {
       chargedById: 'per1',
       chargedByName: 'Camila Rojas',
       lines: [
-        { supplyId: 's2', supplyName: 'Jeringa 5 ml', quantity: 3 },
-        { supplyId: 's1', supplyName: 'Guantes de procedimiento', quantity: 2 },
+        { supplyId: 's_jer5', supplyName: 'Jeringa 5', quantity: 3 },
+        { supplyId: 's_gest', supplyName: 'Guante estéril', quantity: 2 },
       ],
     },
     // Cama 5: recién ingresó, sin cargas (ejemplo del estado vacío por paciente).
@@ -453,13 +454,13 @@ export function getActiveSupplies(serviceId: string = state.settings.currentServ
     })
 }
 
-export function addSupply(name: string) {
+export function addSupply(name: string, serviceIds: string[] = []) {
   const supply: Supply = {
     id: createId('s'),
     name: name.trim(),
     favorite: false,
     active: true,
-    serviceIds: [],
+    serviceIds,
   }
   state = { ...state, supplies: [...state.supplies, supply] }
   persist()
