@@ -67,6 +67,20 @@ export function ChargeScreen({ patientId, onBack, admin }: Props) {
   const baseList =
     mode === 'return' ? supplies.filter((s) => (availableToReturn.get(s.id) ?? 0) > 0) : supplies
   const list = baseList.filter((s) => s.name.toLowerCase().includes(query.trim().toLowerCase()))
+  /**
+   * Insumos agrupados por categoría, preservando el orden ya ordenado de `list`.
+   * Grupos vacíos no se renderizan (importante para búsqueda y modo devolver).
+   */
+  const groupedList = useMemo(() => {
+    const groups = new Map<string, typeof list>()
+    for (const s of list) {
+      const key = s.category ?? 'Otros'
+      const arr = groups.get(key)
+      if (arr) arr.push(s)
+      else groups.set(key, [s])
+    }
+    return [...groups.entries()]
+  }, [list])
   const pendingByService = getPendingTotalsByService(patientId)
   const pendingCount = pendingByService.reduce(
     (sum, g) => sum + g.lines.reduce((s, l) => s + l.quantity, 0),
@@ -303,64 +317,72 @@ export function ChargeScreen({ patientId, onBack, admin }: Props) {
                 : 'No hay insumos con ese nombre.'}
             </div>
           ) : (
-            <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-              {list.map((s, i) => {
-                const qty = draft[s.id] ?? 0
-                const available = availableToReturn.get(s.id) ?? 0
-                const atMax = mode === 'return' && qty >= available
-                return (
-                  <div
-                    key={s.id}
-                    className={`flex min-h-16 items-center justify-between gap-3 px-4 py-2.5 ${
-                      i !== 0 ? 'border-t border-slate-100' : ''
-                    } ${qty ? (mode === 'return' ? 'bg-amber-50' : 'bg-brand-tint/60') : ''}`}
-                  >
-                    <span className="text-[0.95rem] font-medium text-slate-800">
-                      {s.name}
-                      {mode === 'return' ? (
-                        <span className="ml-2 text-[0.7rem] font-semibold uppercase tracking-wide text-amber-700">
-                          {available} cargado{available === 1 ? '' : 's'}
-                        </span>
-                      ) : s.favorite ? (
-                        <span className="ml-2 text-[0.7rem] font-semibold uppercase tracking-wide text-brand/70">
-                          frecuente
-                        </span>
-                      ) : null}
+            <div className="flex flex-col gap-4">
+              {groupedList.map(([groupName, items]) => (
+                <div
+                  key={groupName}
+                  className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
+                >
+                  <div className="border-b border-slate-100 bg-slate-50/70 px-4 py-2">
+                    <span className="text-xs font-semibold uppercase tracking-wide text-brand">
+                      {groupName}
                     </span>
-                    <div className="flex items-center gap-1 rounded-full bg-slate-100 p-0.5">
-                      <button
-                        type="button"
-                        disabled={qty === 0}
-                        onClick={() => bump(s.id, -1)}
-                        aria-label={`Restar ${s.name}`}
-                        className="grid h-10 w-10 place-items-center rounded-full text-lg font-medium text-slate-600 transition-colors hover:bg-white disabled:opacity-30"
-                      >
-                        −
-                      </button>
-                      <span
-                        className={`min-w-7 text-center font-display text-base font-bold tabular-nums ${
-                          qty === 0 ? 'text-slate-400' : 'text-slate-900'
-                        }`}
-                      >
-                        {qty}
-                      </span>
-                      <button
-                        type="button"
-                        disabled={atMax}
-                        onClick={() => bump(s.id, 1)}
-                        aria-label={`Sumar ${s.name}`}
-                        className={`grid h-10 w-10 place-items-center rounded-full text-lg font-medium transition-colors disabled:opacity-30 ${
-                          mode === 'return'
-                            ? 'bg-amber-600 text-white hover:bg-amber-700'
-                            : 'bg-accent text-brand hover:bg-accent-dark'
-                        }`}
-                      >
-                        +
-                      </button>
-                    </div>
                   </div>
-                )
-              })}
+                  {items.map((s, i) => {
+                    const qty = draft[s.id] ?? 0
+                    const available = availableToReturn.get(s.id) ?? 0
+                    const atMax = mode === 'return' && qty >= available
+                    return (
+                      <div
+                        key={s.id}
+                        className={`flex min-h-16 items-center justify-between gap-3 px-4 py-2.5 ${
+                          i !== 0 ? 'border-t border-slate-100' : ''
+                        } ${qty ? (mode === 'return' ? 'bg-amber-50' : 'bg-brand-tint/60') : ''}`}
+                      >
+                        <span className="text-[0.95rem] font-medium text-slate-800">
+                          {s.name}
+                          {mode === 'return' ? (
+                            <span className="ml-2 text-[0.7rem] font-semibold uppercase tracking-wide text-amber-700">
+                              {available} cargado{available === 1 ? '' : 's'}
+                            </span>
+                          ) : null}
+                        </span>
+                        <div className="flex items-center gap-1 rounded-full bg-slate-100 p-0.5">
+                          <button
+                            type="button"
+                            disabled={qty === 0}
+                            onClick={() => bump(s.id, -1)}
+                            aria-label={`Restar ${s.name}`}
+                            className="grid h-10 w-10 place-items-center rounded-full text-lg font-medium text-slate-600 transition-colors hover:bg-white disabled:opacity-30"
+                          >
+                            −
+                          </button>
+                          <span
+                            className={`min-w-7 text-center font-display text-base font-bold tabular-nums ${
+                              qty === 0 ? 'text-slate-400' : 'text-slate-900'
+                            }`}
+                          >
+                            {qty}
+                          </span>
+                          <button
+                            type="button"
+                            disabled={atMax}
+                            onClick={() => bump(s.id, 1)}
+                            aria-label={`Sumar ${s.name}`}
+                            className={`grid h-10 w-10 place-items-center rounded-full text-lg font-medium transition-colors disabled:opacity-30 ${
+                              mode === 'return'
+                                ? 'bg-amber-600 text-white hover:bg-amber-700'
+                                : 'bg-accent text-brand hover:bg-accent-dark'
+                            }`}
+                          >
+                            +
+                          </button>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              ))}
             </div>
           )}
 

@@ -22,6 +22,8 @@ export type Supply = {
   active: boolean
   /** Unidades que tienen este insumo en stock. Vacío = disponible en todas. */
   serviceIds: string[]
+  /** Categoría clínica para agrupar el listado. Vacío = "Otros". */
+  category?: string
 }
 
 /** Profesional o técnico que puede figurar como responsable de una carga. */

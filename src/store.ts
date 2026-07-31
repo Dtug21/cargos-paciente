@@ -9,7 +9,22 @@ import type {
   Supply,
 } from './types'
 
-const STORAGE_KEY = 'cargos-paciente-v10'
+const STORAGE_KEY = 'cargos-paciente-v11'
+
+/**
+ * Categorías del catálogo, en orden de aparición en la lista de carga.
+ * Los insumos sin categoría van al final como "Otros".
+ */
+export const SUPPLY_CATEGORIES = [
+  'Punción y vía venosa',
+  'Jeringas',
+  'Sueros',
+  'Antisepsia y curación',
+  'Sondas',
+  'Conectores y tapas',
+  'Monitoreo',
+  'Confort del paciente',
+] as const
 
 const defaultServices: Service[] = [
   { id: 'svc_upc', name: 'UPC', shortName: 'UPC' },
@@ -18,40 +33,53 @@ const defaultServices: Service[] = [
   { id: 'svc_pab', name: 'Pabellón', shortName: 'PAB' },
 ]
 
-// Catálogo real de insumos. Cada insumo aparece en todas las unidades (serviceIds vacío).
-// Los marcados como favorite se muestran primero en el listado de carga.
+// Catálogo real de insumos, agrupado por categoría.
+// Los "frecuentes" se dejan sin marcar: emergerán del uso real más adelante.
 const defaultSupplies: Supply[] = [
-  // Frecuentes (uso diario en cuidados)
-  { id: 's_ag18', name: 'Aguja 18', favorite: true, active: true, serviceIds: [] },
-  { id: 's_ll3p', name: 'Llave 3 pasos', favorite: true, active: true, serviceIds: [] },
-  { id: 's_jer5', name: 'Jeringa 5', favorite: true, active: true, serviceIds: [] },
-  { id: 's_jer10', name: 'Jeringa 10', favorite: true, active: true, serviceIds: [] },
-  { id: 's_jer20', name: 'Jeringa 20', favorite: true, active: true, serviceIds: [] },
-  { id: 's_gest', name: 'Guante estéril', favorite: true, active: true, serviceIds: [] },
-  { id: 's_gasa', name: 'Gasa estéril', favorite: true, active: true, serviceIds: [] },
-  { id: 's_sf100', name: 'Suero fisiológico 100 cc', favorite: true, active: true, serviceIds: [] },
-  { id: 's_sf250', name: 'Suero fisiológico 250 cc', favorite: true, active: true, serviceIds: [] },
-  { id: 's_alco', name: 'Alcohol pad', favorite: true, active: true, serviceIds: [] },
-  { id: 's_br20', name: 'Bránula 20', favorite: true, active: true, serviceIds: [] },
-  { id: 's_br18', name: 'Bránula 18', favorite: true, active: true, serviceIds: [] },
-  { id: 's_elec', name: 'Electrodos', favorite: true, active: true, serviceIds: [] },
-  // Resto del catálogo (alfabético automático dentro del grupo)
-  { id: 's_apos', name: 'Apósito 10x20', favorite: false, active: true, serviceIds: [] },
-  { id: 's_alll', name: 'Alargador con llave 3 pasos', favorite: false, active: true, serviceIds: [] },
-  { id: 's_br22', name: 'Bránula 22', favorite: false, active: true, serviceIds: [] },
-  { id: 's_hiso', name: 'Hisopos', favorite: false, active: true, serviceIds: [] },
-  { id: 's_jins', name: 'Jeringa insulina', favorite: false, active: true, serviceIds: [] },
-  { id: 's_kcur', name: 'Kit curación', favorite: false, active: true, serviceIds: [] },
-  { id: 's_kviv', name: 'Kit vía venosa', favorite: false, active: true, serviceIds: [] },
-  { id: 's_pana', name: 'Pañal', favorite: false, active: true, serviceIds: [] },
-  { id: 's_pace', name: 'Paño cerrado estéril', favorite: false, active: true, serviceIds: [] },
-  { id: 's_rest', name: 'Riñón estéril', favorite: false, active: true, serviceIds: [] },
-  { id: 's_saba', name: 'Sabanilla', favorite: false, active: true, serviceIds: [] },
-  { id: 's_sf20', name: 'Suero fisiológico 20 cc', favorite: false, active: true, serviceIds: [] },
-  { id: 's_sfol', name: 'Sonda Foley', favorite: false, active: true, serviceIds: [] },
-  { id: 's_snas', name: 'Sonda nasogástrica', favorite: false, active: true, serviceIds: [] },
-  { id: 's_tanr', name: 'Tapas antirreflujo', favorite: false, active: true, serviceIds: [] },
-  { id: 's_tror', name: 'Tapas rojas', favorite: false, active: true, serviceIds: [] },
+  // Punción y vía venosa
+  { id: 's_ag18', name: 'Aguja 18', favorite: false, active: true, serviceIds: [], category: 'Punción y vía venosa' },
+  { id: 's_br18', name: 'Bránula 18', favorite: false, active: true, serviceIds: [], category: 'Punción y vía venosa' },
+  { id: 's_br20', name: 'Bránula 20', favorite: false, active: true, serviceIds: [], category: 'Punción y vía venosa' },
+  { id: 's_br22', name: 'Bránula 22', favorite: false, active: true, serviceIds: [], category: 'Punción y vía venosa' },
+  { id: 's_kviv', name: 'Kit vía venosa', favorite: false, active: true, serviceIds: [], category: 'Punción y vía venosa' },
+  { id: 's_ll3p', name: 'Llave 3 pasos', favorite: false, active: true, serviceIds: [], category: 'Punción y vía venosa' },
+  { id: 's_alll', name: 'Alargador con llave 3 pasos', favorite: false, active: true, serviceIds: [], category: 'Punción y vía venosa' },
+
+  // Jeringas
+  { id: 's_jer5', name: 'Jeringa 5', favorite: false, active: true, serviceIds: [], category: 'Jeringas' },
+  { id: 's_jer10', name: 'Jeringa 10', favorite: false, active: true, serviceIds: [], category: 'Jeringas' },
+  { id: 's_jer20', name: 'Jeringa 20', favorite: false, active: true, serviceIds: [], category: 'Jeringas' },
+  { id: 's_jins', name: 'Jeringa insulina', favorite: false, active: true, serviceIds: [], category: 'Jeringas' },
+
+  // Sueros
+  { id: 's_sf20', name: 'Suero fisiológico 20 cc', favorite: false, active: true, serviceIds: [], category: 'Sueros' },
+  { id: 's_sf100', name: 'Suero fisiológico 100 cc', favorite: false, active: true, serviceIds: [], category: 'Sueros' },
+  { id: 's_sf250', name: 'Suero fisiológico 250 cc', favorite: false, active: true, serviceIds: [], category: 'Sueros' },
+
+  // Antisepsia y curación
+  { id: 's_alco', name: 'Alcohol pad', favorite: false, active: true, serviceIds: [], category: 'Antisepsia y curación' },
+  { id: 's_apos', name: 'Apósito 10x20', favorite: false, active: true, serviceIds: [], category: 'Antisepsia y curación' },
+  { id: 's_gasa', name: 'Gasa estéril', favorite: false, active: true, serviceIds: [], category: 'Antisepsia y curación' },
+  { id: 's_gest', name: 'Guante estéril', favorite: false, active: true, serviceIds: [], category: 'Antisepsia y curación' },
+  { id: 's_hiso', name: 'Hisopos', favorite: false, active: true, serviceIds: [], category: 'Antisepsia y curación' },
+  { id: 's_kcur', name: 'Kit curación', favorite: false, active: true, serviceIds: [], category: 'Antisepsia y curación' },
+  { id: 's_pace', name: 'Paño cerrado estéril', favorite: false, active: true, serviceIds: [], category: 'Antisepsia y curación' },
+  { id: 's_rest', name: 'Riñón estéril', favorite: false, active: true, serviceIds: [], category: 'Antisepsia y curación' },
+
+  // Sondas
+  { id: 's_sfol', name: 'Sonda Foley', favorite: false, active: true, serviceIds: [], category: 'Sondas' },
+  { id: 's_snas', name: 'Sonda nasogástrica', favorite: false, active: true, serviceIds: [], category: 'Sondas' },
+
+  // Conectores y tapas
+  { id: 's_tanr', name: 'Tapas antirreflujo', favorite: false, active: true, serviceIds: [], category: 'Conectores y tapas' },
+  { id: 's_tror', name: 'Tapas rojas', favorite: false, active: true, serviceIds: [], category: 'Conectores y tapas' },
+
+  // Monitoreo
+  { id: 's_elec', name: 'Electrodos', favorite: false, active: true, serviceIds: [], category: 'Monitoreo' },
+
+  // Confort del paciente
+  { id: 's_pana', name: 'Pañal', favorite: false, active: true, serviceIds: [], category: 'Confort del paciente' },
+  { id: 's_saba', name: 'Sabanilla', favorite: false, active: true, serviceIds: [], category: 'Confort del paciente' },
 ]
 
 const defaultPeople: Person[] = [
@@ -276,6 +304,7 @@ function normalizeState(raw: Record<string, unknown>): AppState {
       favorite: Boolean(s.favorite),
       active: s.active !== false,
       serviceIds: cleanServiceIds((s as Supply).serviceIds),
+      category: typeof s.category === 'string' ? s.category : undefined,
     }))
   }
 
@@ -444,12 +473,25 @@ function inService(serviceIds: string[], serviceId: string): boolean {
   return serviceIds.length === 0 || serviceIds.includes(serviceId)
 }
 
-/** Insumos activos de la unidad indicada (por defecto, la unidad de esta tablet). */
+/** Índice de una categoría en el orden canónico. Sin categoría o desconocida => al final. */
+function categoryOrder(cat?: string): number {
+  if (!cat) return SUPPLY_CATEGORIES.length
+  const idx = SUPPLY_CATEGORIES.indexOf(cat as (typeof SUPPLY_CATEGORIES)[number])
+  return idx === -1 ? SUPPLY_CATEGORIES.length : idx
+}
+
+/**
+ * Insumos activos de la unidad indicada (por defecto, la unidad de esta tablet).
+ * Ordenados por categoría (según SUPPLY_CATEGORIES) y dentro de cada una, alfabético.
+ * Los "favoritos" quedan como mecanismo interno para uso futuro (destacar según uso real);
+ * hoy no altera el orden.
+ */
 export function getActiveSupplies(serviceId: string = state.settings.currentServiceId): Supply[] {
   return state.supplies
     .filter((s) => s.active && inService(s.serviceIds, serviceId))
     .sort((a, b) => {
-      if (a.favorite !== b.favorite) return a.favorite ? -1 : 1
+      const diff = categoryOrder(a.category) - categoryOrder(b.category)
+      if (diff !== 0) return diff
       return a.name.localeCompare(b.name, 'es')
     })
 }
